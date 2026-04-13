@@ -18,7 +18,6 @@ export function Header() {
             width={25}
             height={25}
             className="brightness-0 dark:brightness-100"
-            priority
           />
           <span className="capitalize">Swag store</span>
         </Link>
