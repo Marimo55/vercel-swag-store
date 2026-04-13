@@ -7,7 +7,7 @@ export function Hero() {
   return (
     <section
       id="hero"
-      className="flex gap-5 my-10 flex-col-reverse justify-between items-center w-full px-5 md:flex-row md:px-0"
+      className="flex gap-5 my-10 flex-col-reverse justify-between items-center w-full md:flex-row md:px-0"
     >
       <div className="flex flex-col gap-6 md:w-1/2 md:max-w-md">
         <h1 className="font-bold text-5xl">
