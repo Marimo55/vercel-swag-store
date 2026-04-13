@@ -1,3 +1,21 @@
+export interface Pagination {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+export interface Meta {
+  pagination: Pagination;
+}
+
+export interface ApiResponse<T, M = unknown> {
+  success: boolean;
+  data: T;
+  meta?: M;
+}
 export interface Product {
   id: string;
   name: string;
@@ -13,16 +31,14 @@ export interface Product {
 }
 
 export interface Promotions {
-  data: {
-    id: string;
-    title: string;
-    description: string;
-    discountPercent: number;
-    code: string;
-    validFrom: string;
-    validUntil: string;
-    active: boolean;
-  };
+  id: string;
+  title: string;
+  description: string;
+  discountPercent: number;
+  code: string;
+  validFrom: string;
+  validUntil: string;
+  active: boolean;
 }
 
 export interface StockStatus {
