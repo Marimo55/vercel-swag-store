@@ -13,14 +13,16 @@ export interface Product {
 }
 
 export interface Promotions {
-  id: string;
-  title: string;
-  description: string;
-  discountPercent: number;
-  code: string;
-  validFrom: string;
-  validUntil: string;
-  active: boolean;
+  data: {
+    id: string;
+    title: string;
+    description: string;
+    discountPercent: number;
+    code: string;
+    validFrom: string;
+    validUntil: string;
+    active: boolean;
+  };
 }
 
 export interface StockStatus {

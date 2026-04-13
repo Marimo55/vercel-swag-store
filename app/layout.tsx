@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/header";
 import { ReactNode } from "react";
 import { Footer } from "@/components/footer";
+import { PromotionalBanner } from "@/components/promotionalBanner";
 
 const roboto = Roboto({
   weight: ["400", "500", "700"],
@@ -33,6 +34,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <Header />
+        <PromotionalBanner />
         <main className="flex-1 mx-auto w-full max-w-360 px-4 sm:px-6 lg:px-8">
           {children}
         </main>
