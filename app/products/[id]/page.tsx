@@ -3,13 +3,12 @@ import StockStatus from "@/components/stockStatus";
 import { Badge } from "@/components/ui/badge";
 import { getProduct, getStockStatus } from "@/lib/api";
 import { formatPrice } from "@/lib/utils";
-
 import Image from "next/image";
 
 interface ProductPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
@@ -49,9 +48,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
               ))}
           </div>
         </div>
-        <div className="flex flex-row flex-wrap gap-4 items-center justify-between">
+        <div className="flex flex-row flex-wrap gap-4 items-center justify-center sm:justify-between">
           <StockStatus inStock={stockStatus.inStock} />
-          <span className="text-4xl text-right">{formattedPrice}</span>
+          <span className="text-2xl text-right md:text-4xl">
+            {formattedPrice}
+          </span>
         </div>
 
         <div>

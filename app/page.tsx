@@ -3,13 +3,13 @@ import { Hero } from "@/components/hero";
 import { ProductListing } from "@/components/productListing";
 import { Spinner } from "@/components/ui/spinner";
 
-interface HomeProps {
-  searchParams?: {
+interface HomePageProps {
+  searchParams: Promise<{
     page?: string;
-  };
+  }>;
 }
 
-export default async function Home({ searchParams }: HomeProps) {
+export default async function HomePage({ searchParams }: HomePageProps) {
   const params = await searchParams;
   return (
     <div className="flex flex-col gap-12">

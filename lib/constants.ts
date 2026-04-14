@@ -4,3 +4,7 @@ export const NAV_LINKS = [
 ];
 
 export const PRODUCT_LIST_PAGE_SIZE = 6;
+
+export const SEARCH_RESULTS_LIMIT = 5;
+export const SEARCH_DEFAULT_LIMIT = 6;
+export const SEARCH_INPUT_DEBOUNCE_MS = 1000;
