@@ -56,7 +56,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </div>
 
         <div>
-          <AddToCart stock={stockStatus.stock} inStock={stockStatus.inStock} />
+          <AddToCart
+            productId={product.id}
+            stock={stockStatus.stock}
+            inStock={stockStatus.inStock}
+          />
         </div>
         <div className="flex flex-col gap-3">
           <h3 className="font-bold text-lg">Description</h3>

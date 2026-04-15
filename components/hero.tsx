@@ -21,7 +21,7 @@ export function Hero() {
         <div>
           <Link
             className="inline-flex items-center gap-2 rounded-md bg-black px-5 py-3 text-white hover:bg-black/80 transition"
-            href="#products"
+            href="/search"
           >
             <span>Browse All Products</span>
             <ArrowRight />

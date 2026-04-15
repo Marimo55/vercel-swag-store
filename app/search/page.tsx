@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { getProductCategories } from "@/lib/api";
-import { SearchResults } from "@/components/searchResults";
-import { SearchBar } from "@/components/searchBar";
+import { SearchResults } from "@/components/search/searchResults";
+import { SearchBar } from "@/components/search/searchBar";
 
 interface SearchPageProps {
   searchParams: Promise<{

@@ -6,16 +6,14 @@ import {
   Promotions,
   StockStatus,
 } from "@/lib/types";
+import { API_TOKEN, BASE_URL } from "@/lib/constants";
 
 async function fetchAPI(endpoint: string) {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_STORE_API_URL}${endpoint}`,
-    {
-      headers: process.env.API_TOKEN
-        ? { "x-vercel-protection-bypass": process.env.API_TOKEN }
-        : undefined,
-    }
-  );
+  const response = await fetch(`${BASE_URL}${endpoint}`, {
+    headers: API_TOKEN
+      ? { "x-vercel-protection-bypass": API_TOKEN }
+      : undefined,
+  });
 
   if (!response.ok) {
     throw new Error(`API error: ${response.status} ${response.statusText}`);

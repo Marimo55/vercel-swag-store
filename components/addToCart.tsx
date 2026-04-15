@@ -2,51 +2,53 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Minus, Plus } from "lucide-react";
+import { addToCart } from "@/lib/cartActions";
+import { useCartCount } from "@/lib/cartCountContext";
+import { QuantitySelector } from "@/components/quantitySelector";
+import { toast } from "sonner";
 
-type Props = {
+interface Props {
+  productId: string;
   stock: number;
   inStock: boolean;
-};
+}
 
-export default function AddToCart({ stock, inStock }: Props) {
+export default function AddToCart({ productId, stock, inStock }: Props) {
   const [quantity, setQuantity] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const { setCartCount } = useCartCount();
 
   const increaseQty = () => {
-    if (quantity < stock) {
-      setQuantity(quantity + 1);
-    }
+    if (quantity < stock) setQuantity(quantity + 1);
   };
 
   const decreaseQty = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
+    if (quantity > 1) setQuantity(quantity - 1);
+  };
+
+  const handleAddToCart = async () => {
+    setIsLoading(true);
+
+    const result = await addToCart(productId, quantity);
+
+    if (result.success) {
+      setCartCount(result.totalItems);
+      toast.success("Item successfully added to cart");
     }
+    setIsLoading(false);
   };
 
   return (
     <div className="flex flex-col gap-4 items-center sm:items-start">
-      <div className="flex items-center gap-3">
-        <Button
-          variant="secondary"
-          onClick={decreaseQty}
-          disabled={quantity <= 1}
-          className="disabled:opacity-50 cursor-pointer"
-        >
-          <Minus />
-        </Button>
-
-        <span className="w-10 text-center">{quantity}</span>
-
-        <Button
-          variant="secondary"
-          onClick={increaseQty}
-          disabled={quantity >= stock}
-          className="disabled:opacity-50 cursor-pointer"
-        >
-          <Plus />
-        </Button>
-      </div>
+      {inStock && (
+        <QuantitySelector
+          quantity={quantity}
+          onIncrease={increaseQty}
+          onDecrease={decreaseQty}
+          disableIncrease={quantity >= stock || isLoading}
+          disableDecrease={quantity <= 1 || isLoading}
+        />
+      )}
 
       {inStock && (
         <p className="text-sm text-gray-500">
@@ -56,10 +58,11 @@ export default function AddToCart({ stock, inStock }: Props) {
 
       <div>
         <Button
-          disabled={!inStock}
+          onClick={handleAddToCart}
+          disabled={!inStock || isLoading}
           className="rounded-4xl disabled:opacity-50 cursor-pointer text-2xl px-10 py-6 hover:opacity-90"
         >
-          {inStock ? "Add to Cart" : "Out of Stock"}
+          {isLoading ? "Adding..." : inStock ? "Add to Cart" : "Out of Stock"}
         </Button>
       </div>
     </div>

@@ -1,3 +1,6 @@
+export const BASE_URL = process.env.STORE_API_URL!;
+export const API_TOKEN = process.env.API_TOKEN;
+
 export const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "Search", href: "/search" },
