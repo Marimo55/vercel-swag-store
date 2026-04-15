@@ -30,7 +30,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const { data: categories } = await getProductCategories();
 
   return (
-    <div className="pb-16">
+    <div className="py-10">
       <h1 className="text-3xl font-bold text-foreground">Search products</h1>
       <p className="mt-2 text-muted-foreground">
         Find products by keyword or narrow down by category.
