@@ -1,8 +1,11 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { CartIcon } from "@/components/cartIcon";
+import { CartItemsCountIcon } from "@/components/cartItemsCountIcon";
 import { MobileNav } from "@/components/mobileNavigation";
 import { NAV_LINKS } from "@/lib/constants";
+import { Spinner } from "./ui/spinner";
 
 export function Header() {
   return (
@@ -35,7 +38,16 @@ export function Header() {
         </nav>
 
         <div className="ml-auto flex items-center gap-4">
-          <CartIcon />
+          <Suspense
+            fallback={
+              <div className="relative">
+                <CartIcon />
+                <Spinner className="absolute -top-2 -right-2" />
+              </div>
+            }
+          >
+            <CartItemsCountIcon />
+          </Suspense>
           <MobileNav />
         </div>
       </div>

@@ -5,7 +5,6 @@ import { Header } from "@/components/header";
 import { ReactNode } from "react";
 import { Footer } from "@/components/footer";
 import { CartCountProvider } from "@/lib/cartCountContext";
-import { getCart } from "@/lib/cartActions";
 import { Toaster } from "@/components/ui/sonner";
 
 const roboto = Roboto({
@@ -29,16 +28,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
-  const cart = await getCart();
-  const initialCartCount = cart?.totalItems ?? 0;
-
   return (
     <html
       lang="en"
       className={`${roboto.variable} ${robotoMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <CartCountProvider initialCount={initialCartCount}>
+        <CartCountProvider>
           <Header />
           <main className="flex-1 mx-auto w-full max-w-360 px-4 sm:px-6 lg:px-8">
             {children}

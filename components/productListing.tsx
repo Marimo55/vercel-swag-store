@@ -4,13 +4,14 @@ import { ShowMoreButton } from "@/components/showMoreButton";
 import { PRODUCT_LIST_PAGE_SIZE } from "@/lib/constants";
 
 interface ProductListingProps {
-  searchParams?: {
+  searchParams: Promise<{
     page?: string;
-  };
+  }>;
 }
 
 export async function ProductListing({ searchParams }: ProductListingProps) {
-  const page = Math.max(1, Number(searchParams?.page) || 1);
+  const params = await searchParams;
+  const page = Math.max(1, Number(params.page) || 1);
   const limit = page * PRODUCT_LIST_PAGE_SIZE;
 
   const response = await getProducts({ page: 1, limit });

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState, useTransition } from "react";
 import { Search } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   InputGroup,
@@ -22,6 +22,8 @@ import type { ProductCategory } from "@/lib/types";
 
 interface SearchFiltersProps {
   categories: ProductCategory[];
+  initialQuery: string;
+  initialCategory: string;
 }
 
 function buildSearchURL(pathname: string, query: string, categorySlug: string) {
@@ -35,75 +37,53 @@ function buildSearchURL(pathname: string, query: string, categorySlug: string) {
   return queryStr ? `${pathname}?${queryStr}` : pathname;
 }
 
-function matchesCurrentUrl(
-  pathname: string,
-  searchParams: ReturnType<typeof useSearchParams>,
-  url: string
-) {
-  const query = url.indexOf("?");
-  const path = query === -1 ? url : url.slice(0, query);
-  const queryStr = query === -1 ? "" : url.slice(query + 1);
-
-  if (path !== pathname) return false;
-  const target = new URLSearchParams(queryStr);
-
-  if (
-    Array.from(searchParams.entries()).length !==
-    Array.from(target.entries()).length
-  )
-    return false;
-
-  for (const key of target.keys()) {
-    if (searchParams.get(key) !== target.get(key)) return false;
-  }
-  return true;
-}
-
-export function SearchBar({ categories }: SearchFiltersProps) {
+export function SearchBar({
+  categories,
+  initialQuery,
+  initialCategory,
+}: SearchFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
-
-  const queryFromUrl = searchParams.get("q") ?? "";
-  const categoryFromUrl = searchParams.get("category") ?? "";
-
-  const [inputValue, setInputValue] = useState(queryFromUrl);
+  const [inputValue, setInputValue] = useState(initialQuery);
+  const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const debouncedQuery = useDebounce(inputValue);
+
+  useEffect(() => {
+    setInputValue(initialQuery);
+  }, [initialQuery]);
+
+  useEffect(() => {
+    setSelectedCategory(initialCategory);
+  }, [initialCategory]);
 
   const navigateTo = useCallback(
     (url: string) => {
-      if (matchesCurrentUrl(pathname, searchParams, url)) return;
       startTransition(() => {
         router.push(url, { scroll: false });
       });
     },
-    [router, pathname, searchParams]
+    [router]
   );
 
   const onCategoryChange = useCallback(
     (categorySlug: string) => {
+      setSelectedCategory(categorySlug);
       navigateTo(buildSearchURL(pathname, inputValue.trim(), categorySlug));
     },
     [inputValue, pathname, navigateTo]
   );
 
   const submitSearch = useCallback(() => {
-    navigateTo(buildSearchURL(pathname, inputValue.trim(), categoryFromUrl));
-  }, [inputValue, categoryFromUrl, pathname, navigateTo]);
-
-  useEffect(() => {
-    setInputValue(queryFromUrl);
-  }, [queryFromUrl]);
+    navigateTo(buildSearchURL(pathname, inputValue.trim(), selectedCategory));
+  }, [inputValue, selectedCategory, pathname, navigateTo]);
 
   useEffect(() => {
     const trimmedQuery = debouncedQuery.trim();
-    if (trimmedQuery.length < 3) return;
-
-    const url = buildSearchURL(pathname, trimmedQuery, categoryFromUrl);
-    const currentUrl = buildSearchURL(pathname, queryFromUrl, categoryFromUrl);
-    if (url !== currentUrl) navigateTo(url);
-  }, [debouncedQuery, pathname, queryFromUrl, categoryFromUrl, navigateTo]);
+    if (trimmedQuery.length >= 3) {
+      navigateTo(buildSearchURL(pathname, trimmedQuery, selectedCategory));
+    }
+  }, [debouncedQuery, pathname, selectedCategory, navigateTo]);
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-5xl m-auto py-10">
@@ -117,6 +97,7 @@ export function SearchBar({ categories }: SearchFiltersProps) {
           placeholder="Search products…"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
+          disabled={isPending}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
@@ -143,7 +124,7 @@ export function SearchBar({ categories }: SearchFiltersProps) {
           Search by Category
         </label>
         <Select
-          value={categoryFromUrl}
+          value={selectedCategory}
           onValueChange={(value) => onCategoryChange(value ?? "")}
           disabled={isPending}
         >

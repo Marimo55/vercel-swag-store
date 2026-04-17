@@ -1,11 +1,22 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { ShoppingBag } from "lucide-react";
 import { useCartCount } from "@/lib/cartCountContext";
 
-export function CartIcon() {
-  const { cartCount } = useCartCount();
+interface CartIconProps {
+  itemsCount?: number;
+}
+
+export function CartIcon({ itemsCount }: CartIconProps) {
+  const { cartCount, setCartCount } = useCartCount();
+
+  useEffect(() => {
+    if (typeof itemsCount === "number") {
+      setCartCount(itemsCount);
+    }
+  }, [itemsCount, setCartCount]);
 
   return (
     <Link

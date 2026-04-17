@@ -18,10 +18,10 @@ export function useCartCount() {
 
 export function CartCountProvider({
   children,
-  initialCount,
+  initialCount = 0,
 }: {
   children: ReactNode;
-  initialCount: number;
+  initialCount?: number;
 }) {
   const [cartCount, setCartCount] = useState(initialCount);
 

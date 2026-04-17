@@ -7,6 +7,7 @@ import {
   StockStatus,
 } from "@/lib/types";
 import { API_TOKEN, BASE_URL } from "@/lib/constants";
+import { cacheLife, cacheTag } from "next/cache";
 
 async function fetchAPI(endpoint: string) {
   const response = await fetch(`${BASE_URL}${endpoint}`, {
@@ -31,6 +32,14 @@ export async function getProducts(params?: {
   search?: string;
   featured?: boolean;
 }): Promise<ApiResponse<Product[], Meta>> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("products");
+
+  if (params?.category) {
+    cacheTag(`category:${params.category}`);
+  }
+
   const searchParams = new URLSearchParams();
   if (params?.page) searchParams.set("page", params.page.toString());
   if (params?.limit) searchParams.set("limit", params.limit.toString());
@@ -44,12 +53,18 @@ export async function getProducts(params?: {
 }
 
 export async function getProduct(id: string): Promise<ApiResponse<Product>> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("products", `product:${id}`);
   return fetchAPI(`/products/${id}`);
 }
 
 export async function getProductCategories(): Promise<
   ApiResponse<ProductCategory[]>
 > {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("categories");
   return fetchAPI(`/categories`);
 }
 

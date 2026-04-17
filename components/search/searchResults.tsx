@@ -10,16 +10,18 @@ import {
 import { TextSearch } from "lucide-react";
 
 interface SearchResultsProps {
-  query: string;
-  hasQueryParam: boolean;
-  categorySlug: string;
+  searchParams: Promise<{
+    q?: string;
+    category?: string;
+  }>;
 }
 
-export async function SearchResults({
-  query,
-  hasQueryParam,
-  categorySlug,
-}: SearchResultsProps) {
+export async function SearchResults({ searchParams }: SearchResultsProps) {
+  const params = await searchParams;
+  const hasQueryParam = "q" in params;
+  const query = typeof params.q === "string" ? params.q : "";
+  const categorySlug =
+    typeof params.category === "string" ? params.category : "";
   const trimmed = query.trim();
   const isSearch = hasQueryParam && trimmed.length > 0;
   const response = isSearch

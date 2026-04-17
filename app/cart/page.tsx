@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
 import { getCart } from "@/lib/cartActions";
@@ -11,8 +12,9 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
+import { Spinner } from "@/components/ui/spinner";
 
-export default async function CartPage() {
+async function CartContents() {
   const cart = await getCart();
 
   if (!cart || cart.items.length === 0) {
@@ -59,5 +61,20 @@ export default async function CartPage() {
         <OrderSummary cart={cart} />
       </div>
     </div>
+  );
+}
+
+export default function CartPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="py-10 flex flex-col items-center justify-center gap-2">
+          <Spinner className="size-10 m-auto" />
+          <span>Loading your cart...</span>
+        </div>
+      }
+    >
+      <CartContents />
+    </Suspense>
   );
 }
