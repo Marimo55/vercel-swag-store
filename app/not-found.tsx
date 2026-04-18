@@ -1,5 +1,21 @@
 import Link from "next/link";
 import { FileQuestion } from "lucide-react";
+import { SITE_NAME } from "@/lib/site";
+
+export const metadata = {
+  title: "Page not found",
+  description: `The page you requested does not exist on ${SITE_NAME}.`,
+  robots: { index: false, follow: true },
+  openGraph: {
+    title: `Page not found | ${SITE_NAME}`,
+    description: `The page you requested does not exist on ${SITE_NAME}.`,
+  },
+  twitter: {
+    card: "summary",
+    title: `Page not found | ${SITE_NAME}`,
+    description: `The page you requested does not exist on ${SITE_NAME}.`,
+  },
+};
 
 export default function NotFound() {
   return (

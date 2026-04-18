@@ -13,6 +13,22 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { Spinner } from "@/components/ui/spinner";
+import { SITE_NAME } from "@/lib/site";
+
+export const metadata = {
+  title: "Cart",
+  description: `Review items, quantities, and your subtotal before checkout at ${SITE_NAME}.`,
+  openGraph: {
+    title: `Cart | ${SITE_NAME}`,
+    description: `Review your shopping cart at ${SITE_NAME}.`,
+    url: "/cart",
+  },
+  twitter: {
+    card: "summary",
+    title: `Cart | ${SITE_NAME}`,
+    description: `Review your shopping cart at ${SITE_NAME}.`,
+  },
+};
 
 async function CartContents() {
   const cart = await getCart();

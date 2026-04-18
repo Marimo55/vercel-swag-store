@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import AddToCart from "@/components/addToCart";
@@ -6,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getProduct, getStockStatus } from "@/lib/api";
 import { isApiError } from "@/lib/apiErrors";
+import { SITE_NAME } from "@/lib/site";
 import { formatPrice } from "@/lib/utils";
 import Image from "next/image";
 
@@ -13,6 +15,68 @@ interface ProductPageProps {
   params: Promise<{
     id: string;
   }>;
+}
+
+function productNotFoundMetadata() {
+  const description = `The product is not available in ${SITE_NAME}.`;
+  return {
+    title: "Product not found",
+    description,
+    robots: { index: false, follow: true },
+    openGraph: {
+      title: `Product not found | ${SITE_NAME}`,
+      description: `That product is not available in ${SITE_NAME}.`,
+    },
+    twitter: {
+      card: "summary",
+      title: `Product not found | ${SITE_NAME}`,
+      description: `That product is not available in ${SITE_NAME}.`,
+    },
+  };
+}
+
+export async function generateMetadata({
+  params,
+}: ProductPageProps): Promise<Metadata> {
+  const { id } = await params;
+
+  try {
+    const { data: product } = await getProduct(id);
+    const title = product.name;
+    const description = product.description.trim();
+    const path = `/products/${product.slug}`;
+    const ogImage = product.images[0];
+
+    return {
+      title,
+      description,
+      openGraph: {
+        type: "website",
+        title,
+        description,
+        url: path,
+        images: [
+          {
+            url: ogImage,
+            width: 1200,
+            height: 1200,
+            alt: product.name,
+          },
+        ],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: [ogImage],
+      },
+    };
+  } catch (error) {
+    if (isApiError(error) && error.isNotFound) {
+      return productNotFoundMetadata();
+    }
+    throw error;
+  }
 }
 
 export default function ProductPage({ params }: ProductPageProps) {

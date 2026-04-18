@@ -5,12 +5,59 @@ import { SearchResults } from "@/components/search/searchResults";
 import { SearchBar } from "@/components/search/searchBar";
 import type { ProductCategory } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SITE_NAME } from "@/lib/site";
 
 interface SearchPageProps {
   searchParams: Promise<{
     q?: string;
     category?: string;
   }>;
+}
+
+export async function generateMetadata({ searchParams }: SearchPageProps) {
+  const params = await searchParams;
+  const query = typeof params.q === "string" ? params.q.trim() : "";
+  const category =
+    typeof params.category === "string" ? params.category.trim() : "";
+
+  const urlParams = new URLSearchParams();
+
+  if (query) urlParams.set("q", query);
+  if (category) urlParams.set("category", category);
+
+  const path = urlParams.toString()
+    ? `/search?${urlParams.toString()}`
+    : "/search";
+
+  let title = "Search";
+  let description =
+    "Search by keyword or filter by category in the Vercel Swag Store.";
+
+  if (query && category) {
+    title = `Search: ${query} & ${category}`;
+    description = `Results for “${query}” in ${category} at ${SITE_NAME}.`;
+  } else if (query) {
+    title = `Search: ${query}`;
+    description = `Search results for “${query}” in the ${SITE_NAME} catalog.`;
+  } else if (category) {
+    title = `Browse: ${category}`;
+    description = `Browse ${category} products at ${SITE_NAME}.`;
+  }
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title: `${title} | ${SITE_NAME}`,
+      description,
+      url: path,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | ${SITE_NAME}`,
+      description,
+    },
+  };
 }
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
