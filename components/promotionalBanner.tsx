@@ -2,7 +2,13 @@ import { getPromotions } from "@/lib/api";
 import { format } from "date-fns";
 
 export async function PromotionalBanner() {
-  const { data } = await getPromotions();
+  let data;
+  try {
+    const res = await getPromotions();
+    data = res.data;
+  } catch {
+    return null;
+  }
 
   if (!data.active) return null;
 

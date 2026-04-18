@@ -8,21 +8,59 @@ import {
 } from "@/lib/types";
 import { API_TOKEN, BASE_URL } from "@/lib/constants";
 import { cacheLife, cacheTag } from "next/cache";
+import { ApiError, readApiErrorMessage } from "@/lib/apiErrors";
+import { parseJson } from "@/lib/utils";
 
-async function fetchAPI(endpoint: string) {
-  const response = await fetch(`${BASE_URL}${endpoint}`, {
-    headers: API_TOKEN
-      ? { "x-vercel-protection-bypass": API_TOKEN }
-      : undefined,
-  });
+async function fetchAPI<T>(endpoint: string): Promise<T> {
+  let response: Response;
 
-  if (!response.ok) {
-    throw new Error(`API error: ${response.status} ${response.statusText}`);
+  try {
+    response = await fetch(`${BASE_URL}${endpoint}`, {
+      headers: API_TOKEN
+        ? { "x-vercel-protection-bypass": API_TOKEN }
+        : undefined,
+    });
+  } catch {
+    throw new ApiError(
+      "Unable to reach the store API. Check your connection and try again",
+      0,
+      "Network Error"
+    );
   }
 
-  const data = await response.json();
+  const payload = await parseJson(response);
 
-  return data;
+  if (!response.ok) {
+    throw new ApiError(
+      readApiErrorMessage(payload) ?? `Request failed (${response.status})`,
+      response.status,
+      response.statusText
+    );
+  }
+
+  if (
+    !payload ||
+    typeof payload !== "object" ||
+    !("success" in payload) ||
+    payload.success !== true
+  ) {
+    throw new ApiError(
+      readApiErrorMessage(payload) ??
+        "The store could not complete this request",
+      response.status,
+      response.statusText
+    );
+  }
+
+  if (!("data" in payload)) {
+    throw new ApiError(
+      "Invalid response from server",
+      response.status,
+      response.statusText
+    );
+  }
+
+  return payload;
 }
 
 export async function getProducts(params?: {

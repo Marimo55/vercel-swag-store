@@ -1,9 +1,11 @@
 import { Suspense } from "react";
+import { notFound } from "next/navigation";
 import AddToCart from "@/components/addToCart";
 import StockStatus from "@/components/stockStatus";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getProduct, getStockStatus } from "@/lib/api";
+import { isApiError } from "@/lib/apiErrors";
 import { formatPrice } from "@/lib/utils";
 import Image from "next/image";
 
@@ -23,7 +25,13 @@ export default function ProductPage({ params }: ProductPageProps) {
 
 async function ProductPageContent({ params }: ProductPageProps) {
   const { id } = await params;
-  const productRes = await getProduct(id);
+  let productRes;
+  try {
+    productRes = await getProduct(id);
+  } catch (error) {
+    if (isApiError(error) && error.isNotFound) notFound();
+    throw error;
+  }
 
   const { data: product } = productRes;
   const { name, description, images, price, currency, tags } = product;
@@ -72,7 +80,15 @@ async function ProductPageContent({ params }: ProductPageProps) {
 }
 
 async function ProductPurchaseSection({ productId }: { productId: string }) {
-  const { data: stockStatus } = await getStockStatus(productId);
+  let stockRes;
+  try {
+    stockRes = await getStockStatus(productId);
+  } catch (error) {
+    if (isApiError(error) && error.isNotFound) notFound();
+    throw error;
+  }
+
+  const { data: stockStatus } = stockRes;
 
   return (
     <div className="flex flex-col gap-4">

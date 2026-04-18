@@ -1,5 +1,6 @@
 import { getProducts } from "@/lib/api";
 import { ProductCard } from "@/components/productCard";
+import { ProductListingError } from "@/components/productListingError";
 import { ShowMoreButton } from "@/components/showMoreButton";
 import { PRODUCT_LIST_PAGE_SIZE } from "@/lib/constants";
 
@@ -14,7 +15,14 @@ export async function ProductListing({ searchParams }: ProductListingProps) {
   const page = Math.max(1, Number(params.page) || 1);
   const limit = page * PRODUCT_LIST_PAGE_SIZE;
 
-  const response = await getProducts({ page: 1, limit });
+  let response;
+  try {
+    response = await getProducts({ page: 1, limit });
+  } catch (e) {
+    const message = e instanceof Error ? e.message : undefined;
+    return <ProductListingError message={message} />;
+  }
+
   const products = response.data;
   const totalProducts = response.meta?.pagination?.total ?? 0;
   const hasNextPage = response.meta?.pagination?.hasNextPage ?? false;

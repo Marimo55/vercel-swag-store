@@ -11,3 +11,11 @@ export function formatPrice(priceCents: number, currency: string = "USD") {
     currency,
   }).format(priceCents / 100);
 }
+
+export async function parseJson(res: Response) {
+  try {
+    return await res.json();
+  } catch {
+    return null;
+  }
+}

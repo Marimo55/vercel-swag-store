@@ -71,3 +71,7 @@ export interface Cart {
   createdAt: string;
   updatedAt: string;
 }
+
+export type CartMutation =
+  | { success: true; totalItems: number }
+  | { success: false; totalItems: number; error: string };

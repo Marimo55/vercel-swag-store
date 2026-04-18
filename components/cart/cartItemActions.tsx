@@ -25,6 +25,8 @@ export function CartItemActions({ productId, quantity }: CartItemActionsProps) {
       if (result.success) {
         setCartCount(result.totalItems);
         router.refresh();
+      } else {
+        toast.error(result.error);
       }
     });
   };
@@ -34,8 +36,10 @@ export function CartItemActions({ productId, quantity }: CartItemActionsProps) {
       const result = await removeCartItem(productId);
       if (result.success) {
         setCartCount(result.totalItems);
-        toast.success("Item succesfuly removed from cart");
+        toast.success("Item successfully removed from cart");
         router.refresh();
+      } else {
+        toast.error(result.error);
       }
     });
   };

@@ -7,13 +7,17 @@ import { useCartCount } from "@/lib/cartCountContext";
 import { QuantitySelector } from "@/components/quantitySelector";
 import { toast } from "sonner";
 
-interface Props {
+interface AddToCartProps {
   productId: string;
   stock: number;
   inStock: boolean;
 }
 
-export default function AddToCart({ productId, stock, inStock }: Props) {
+export default function AddToCart({
+  productId,
+  stock,
+  inStock,
+}: AddToCartProps) {
   const [quantity, setQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const { setCartCount } = useCartCount();
@@ -34,6 +38,8 @@ export default function AddToCart({ productId, stock, inStock }: Props) {
     if (result.success) {
       setCartCount(result.totalItems);
       toast.success("Item successfully added to cart");
+    } else {
+      toast.error(result.error);
     }
     setIsLoading(false);
   };
