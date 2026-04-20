@@ -44,7 +44,11 @@ export function CartItem({ item, currency }: CartItemProps) {
           {formatPrice(product.price, currency)} each
         </p>
 
-        <CartItemActions productId={productId} quantity={quantity} />
+        <CartItemActions
+          productId={productId}
+          quantity={quantity}
+          productName={product.name}
+        />
       </div>
     </li>
   );

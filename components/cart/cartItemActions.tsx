@@ -12,9 +12,14 @@ import { toast } from "sonner";
 interface CartItemActionsProps {
   productId: string;
   quantity: number;
+  productName: string;
 }
 
-export function CartItemActions({ productId, quantity }: CartItemActionsProps) {
+export function CartItemActions({
+  productId,
+  quantity,
+  productName,
+}: CartItemActionsProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const { setCartCount } = useCartCount();
@@ -52,15 +57,18 @@ export function CartItemActions({ productId, quantity }: CartItemActionsProps) {
         onDecrease={() => handleUpdate(quantity - 1)}
         disableIncrease={isPending}
         disableDecrease={quantity <= 1 || isPending}
+        groupLabel={`Quantity for ${productName}`}
       />
       <Button
+        type="button"
         variant="ghost"
         size="icon-lg"
         onClick={handleRemove}
         disabled={isPending}
+        aria-label={`Remove ${productName} from cart`}
         className="ml-auto size-8 text-muted-foreground cursor-pointer hover:text-destructive"
       >
-        <Trash2 className="size-5" />
+        <Trash2 className="size-5" aria-hidden />
       </Button>
     </div>
   );

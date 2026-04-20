@@ -28,8 +28,15 @@ export async function ProductListing({ searchParams }: ProductListingProps) {
   const hasNextPage = response.meta?.pagination?.hasNextPage ?? false;
 
   return (
-    <section id="product-listing" className=" pb-12">
-      <h2 className="text-3xl font-bold text-foreground mb-8">
+    <section
+      id="product-listing"
+      className=" pb-12"
+      aria-labelledby="featured-products-heading"
+    >
+      <h2
+        id="featured-products-heading"
+        className="text-3xl font-bold text-foreground mb-8"
+      >
         Featured Products
       </h2>
 

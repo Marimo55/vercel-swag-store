@@ -53,7 +53,7 @@ export async function SearchResults({ searchParams }: SearchResultsProps) {
       <Empty className="border py-30">
         <EmptyHeader>
           <EmptyMedia variant="icon">
-            <TextSearch />
+            <TextSearch aria-hidden />
           </EmptyMedia>
           <EmptyTitle className="text-lg text-muted-foreground">
             {isSearch ? (
@@ -71,8 +71,11 @@ export async function SearchResults({ searchParams }: SearchResultsProps) {
   }
 
   return (
-    <section>
-      <h2 className="text-2xl font-semibold text-foreground mb-6">
+    <section aria-labelledby="search-results-heading">
+      <h2
+        id="search-results-heading"
+        className="text-2xl font-semibold text-foreground mb-6"
+      >
         {isSearch ? searchTitle : browseTitle}
       </h2>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

@@ -13,19 +13,24 @@ export function Header() {
       <div className="mx-auto flex items-center h-14 max-w-360 px-4 sm:px-6 lg:px-8">
         <Link
           href="/"
+          aria-label="Vercel Swag store home"
           className="flex items-center gap-2 font-semibold text-foreground hover:opacity-80 transition-opacity"
         >
-          <Image
-            src="/vercel.svg"
-            alt="Vercel"
-            width={25}
-            height={25}
-            className="brightness-0 dark:brightness-100"
-          />
+          <div className="w-6.25 h-6.25 relative">
+            <Image
+              src="/vercel.svg"
+              alt="Vercel"
+              fill
+              className="brightness-0 dark:brightness-100 "
+            />
+          </div>
           <span className="capitalize">Swag store</span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-6 ml-6 text-sm">
+        <nav
+          className="hidden md:flex items-center gap-6 ml-6 text-sm"
+          aria-label="Main"
+        >
           {NAV_LINKS.map(({ label, href }) => (
             <Link
               key={href}

@@ -26,6 +26,7 @@ export function ProductCard({ product }: ProductCardProps) {
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover transition-transform group-hover:scale-105"
+            loading="lazy"
           />
         </div>
 

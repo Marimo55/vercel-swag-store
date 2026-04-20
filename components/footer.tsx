@@ -9,9 +9,7 @@ export function Footer() {
         <div className="text-sm text-muted-foreground">
           &copy; {CURRENT_YEAR} Vercel Swag Store. All rights reserved.
         </div>
-
-        <hr className="sm:hidden bg-border w-20 my-4" />
-
+        <hr className="sm:hidden bg-border w-20 my-4" aria-hidden />
         <ul className="flex flex-col items-center flex-wrap justify-center gap-4 sm:gap-0 sm:divide-x divide-border sm:flex-row text-sm">
           <li className="sm:px-3">
             <Link

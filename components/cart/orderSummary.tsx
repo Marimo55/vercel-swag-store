@@ -11,8 +11,13 @@ export function OrderSummary({ cart }: OrderSummaryProps) {
   const { items, subtotal, currency } = cart;
 
   return (
-    <div className="w-full lg:w-80 shrink-0 rounded-lg border border-border p-6 flex flex-col gap-4 sticky top-20">
-      <h2 className="text-lg font-semibold">Order Summary</h2>
+    <aside
+      className="w-full lg:w-80 shrink-0 rounded-lg border border-border p-6 flex flex-col gap-4 sticky top-20"
+      aria-labelledby="order-summary-heading"
+    >
+      <h2 id="order-summary-heading" className="text-lg font-semibold">
+        Order Summary
+      </h2>
 
       <div className="flex flex-col gap-2 text-sm">
         {items.map(({ productId, product, quantity, lineTotal }) => (
@@ -34,7 +39,7 @@ export function OrderSummary({ cart }: OrderSummaryProps) {
         Shipping and taxes calculated at checkout.
       </p>
 
-      <Button className="w-full" size="lg">
+      <Button type="button" className="w-full" size="lg">
         Checkout
       </Button>
 
@@ -44,6 +49,6 @@ export function OrderSummary({ cart }: OrderSummaryProps) {
       >
         Continue Shopping
       </Link>
-    </div>
+    </aside>
   );
 }

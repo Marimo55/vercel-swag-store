@@ -2,8 +2,8 @@
 
 import { cookies } from "next/headers";
 import type { Cart, CartMutation } from "@/lib/types";
-import { API_TOKEN, BASE_URL } from "@/lib/constants";
-import { ApiError, readApiErrorMessage } from "@/lib/apiErrors";
+import { API_TOKEN, BASE_URL, EXPIRED_CART_MESSAGE } from "@/lib/constants";
+import { ApiError, isApiError, readApiErrorMessage } from "@/lib/apiErrors";
 import { parseJson } from "@/lib/utils";
 
 function apiHeaders(cartToken?: string) {
@@ -14,12 +14,29 @@ function apiHeaders(cartToken?: string) {
   };
 }
 
-function setMutationError(error: unknown, fallback: string) {
+function setMutationError(error: unknown, fallback: string): CartMutation {
   return {
     success: false,
     totalItems: 0,
     error: error instanceof Error ? error.message : fallback,
   };
+}
+
+function isInvalidCartSessionError(error: unknown): boolean {
+  if (!isApiError(error)) return false;
+  if (error.status === 404 || error.status === 401) return true;
+  const msg = error.message.toLowerCase();
+  return (
+    msg.includes("token") &&
+    (msg.includes("not found") ||
+      msg.includes("invalid") ||
+      msg.includes("expired"))
+  );
+}
+
+async function clearCartCookie() {
+  const cookieStore = await cookies();
+  cookieStore.delete("cart_token");
 }
 
 async function cartFetch<T>(
@@ -104,7 +121,32 @@ export async function getCart(): Promise<Cart | null> {
   const token = cookieStore.get("cart_token")?.value;
   if (!token) return null;
 
-  return cartFetch("/cart", { method: "GET" }, token);
+  try {
+    return await cartFetch("/cart", { method: "GET" }, token);
+  } catch (e) {
+    if (isInvalidCartSessionError(e)) {
+      // Do not call cookieStore.delete here: getCart runs during RSC render, where
+      // cookies are read-only. Stale tokens are cleared in mutation server actions.
+      return null;
+    }
+    throw e;
+  }
+}
+
+async function postAddToCart(
+  productId: string,
+  quantity: number,
+  token: string
+): Promise<CartMutation> {
+  const cart = await cartFetch<Cart>(
+    "/cart",
+    {
+      method: "POST",
+      body: JSON.stringify({ productId, quantity }),
+    },
+    token
+  );
+  return { success: true, totalItems: cart.totalItems };
 }
 
 export async function addToCart(
@@ -113,15 +155,16 @@ export async function addToCart(
 ): Promise<CartMutation> {
   try {
     const token = await getCartToken();
-    const cart = await cartFetch<Cart>(
-      "/cart",
-      {
-        method: "POST",
-        body: JSON.stringify({ productId, quantity }),
-      },
-      token
-    );
-    return { success: true, totalItems: cart.totalItems };
+    try {
+      return await postAddToCart(productId, quantity, token);
+    } catch (e) {
+      if (isInvalidCartSessionError(e)) {
+        await clearCartCookie();
+        const newToken = await getCartToken();
+        return await postAddToCart(productId, quantity, newToken);
+      }
+      throw e;
+    }
   } catch (e) {
     return setMutationError(e, "Unable to add item to cart");
   }
@@ -148,6 +191,14 @@ export async function updateCartItem(
     );
     return { success: true, totalItems: cart.totalItems };
   } catch (e) {
+    if (isInvalidCartSessionError(e)) {
+      await clearCartCookie();
+      return {
+        success: false,
+        totalItems: 0,
+        error: EXPIRED_CART_MESSAGE,
+      };
+    }
     return setMutationError(e, "Unable to update cart item");
   }
 }
@@ -167,6 +218,14 @@ export async function removeCartItem(productId: string): Promise<CartMutation> {
     );
     return { success: true, totalItems: cart.totalItems };
   } catch (e) {
+    if (isInvalidCartSessionError(e)) {
+      await clearCartCookie();
+      return {
+        success: false,
+        totalItems: 0,
+        error: EXPIRED_CART_MESSAGE,
+      };
+    }
     return setMutationError(e, "Unable to remove cart item");
   }
 }

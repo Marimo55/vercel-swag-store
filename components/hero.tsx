@@ -2,6 +2,7 @@ import Image from "next/image";
 
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { SITE_NAME } from "@/lib/site";
 
 export function Hero() {
   return (
@@ -24,7 +25,7 @@ export function Hero() {
             href="/search"
           >
             <span>Browse All Products</span>
-            <ArrowRight />
+            <ArrowRight aria-hidden />
           </Link>
         </div>
       </div>
@@ -35,7 +36,7 @@ export function Hero() {
           src="/hero-1.jpg"
           fill
           sizes="(max-width: 768px) 100vw, 50vw"
-          alt="hero image"
+          alt={`${SITE_NAME} products, headphones and accessories`}
           priority
         />
       </div>

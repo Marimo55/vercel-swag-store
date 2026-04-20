@@ -34,8 +34,10 @@ export function ShowMoreButton({
 
   return (
     <Button
+      type="button"
       onClick={handleShowMore}
       disabled={isPending}
+      aria-busy={isPending}
       size="lg"
       className="w-full sm:w-auto cursor-pointer"
     >

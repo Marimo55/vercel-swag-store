@@ -19,7 +19,10 @@ export async function PromotionalBanner() {
   const until = format(new Date(validUntil), "MMMM d, yyyy");
 
   return (
-    <div className="w-screen relative left-1/2 -translate-x-1/2 bg-black text-white py-8">
+    <div
+      className="w-screen relative left-1/2 -translate-x-1/2 bg-black text-white py-8"
+      aria-label="Active promotion"
+    >
       <div className="max-w-360 mx-auto px-4">
         <p className="text-center">
           <span>

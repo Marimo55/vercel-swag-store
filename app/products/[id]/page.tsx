@@ -132,7 +132,7 @@ async function ProductPageContent({ params }: ProductPageProps) {
         </div>
 
         <Suspense fallback={<ProductPurchaseFallback />}>
-          <ProductPurchaseSection productId={product.id} />
+          <ProductPurchaseSection productId={product.id} productName={name} />
         </Suspense>
         <div className="flex flex-col gap-3">
           <h3 className="font-bold text-lg">Description</h3>
@@ -143,7 +143,13 @@ async function ProductPageContent({ params }: ProductPageProps) {
   );
 }
 
-async function ProductPurchaseSection({ productId }: { productId: string }) {
+async function ProductPurchaseSection({
+  productId,
+  productName,
+}: {
+  productId: string;
+  productName: string;
+}) {
   let stockRes;
   try {
     stockRes = await getStockStatus(productId);
@@ -159,6 +165,7 @@ async function ProductPurchaseSection({ productId }: { productId: string }) {
       <StockStatus inStock={stockStatus.inStock} />
       <AddToCart
         productId={productId}
+        productName={productName}
         stock={stockStatus.stock}
         inStock={stockStatus.inStock}
       />

@@ -89,7 +89,7 @@ export function SearchBar({
     <div className="flex flex-col gap-6 w-full max-w-5xl m-auto py-10">
       <InputGroup className="h-12 w-full">
         <InputGroupAddon align="inline-start">
-          <Search className="text-muted-foreground" />
+          <Search className="text-muted-foreground" aria-hidden />
         </InputGroupAddon>
         <InputGroupInput
           id="product-search"

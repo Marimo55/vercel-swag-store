@@ -9,12 +9,14 @@ import { toast } from "sonner";
 
 interface AddToCartProps {
   productId: string;
+  productName: string;
   stock: number;
   inStock: boolean;
 }
 
 export default function AddToCart({
   productId,
+  productName,
   stock,
   inStock,
 }: AddToCartProps) {
@@ -53,6 +55,7 @@ export default function AddToCart({
           onDecrease={decreaseQty}
           disableIncrease={quantity >= stock || isLoading}
           disableDecrease={quantity <= 1 || isLoading}
+          groupLabel={`Quantity for ${productName}`}
         />
       )}
 
@@ -64,8 +67,17 @@ export default function AddToCart({
 
       <div>
         <Button
+          type="button"
           onClick={handleAddToCart}
           disabled={!inStock || isLoading}
+          aria-busy={isLoading}
+          aria-label={
+            inStock
+              ? `Add ${quantity} ${
+                  quantity === 1 ? "item" : "items"
+                } of ${productName} to cart`
+              : undefined
+          }
           className="rounded-4xl disabled:opacity-50 cursor-pointer text-2xl px-10 py-6 hover:opacity-90"
         >
           {isLoading ? "Adding..." : inStock ? "Add to Cart" : "Out of Stock"}
