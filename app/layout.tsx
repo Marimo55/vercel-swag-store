@@ -23,6 +23,9 @@ const siteUrl = getSiteUrl();
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  icons: {
+    icon: "/vercel.svg",
+  },
   title: {
     default: SITE_NAME,
     template: `%s | ${SITE_NAME}`,

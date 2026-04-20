@@ -1,8 +1,16 @@
-import { getProducts } from "@/lib/api";
+import { getAllProducts } from "@/lib/api";
 import { ProductCard } from "@/components/productCard";
 import { ProductListingError } from "@/components/productListingError";
 import { ShowMoreButton } from "@/components/showMoreButton";
 import { PRODUCT_LIST_PAGE_SIZE } from "@/lib/constants";
+import type { Product } from "@/lib/types";
+
+function sortProductsFeaturedFirst(products: Product[]): Product[] {
+  return [...products].sort((a, b) => {
+    if (a.featured !== b.featured) return a.featured ? -1 : 1;
+    return a.name.localeCompare(b.name, "en");
+  });
+}
 
 interface ProductListingProps {
   searchParams: Promise<{
@@ -15,17 +23,18 @@ export async function ProductListing({ searchParams }: ProductListingProps) {
   const page = Math.max(1, Number(params.page) || 1);
   const limit = page * PRODUCT_LIST_PAGE_SIZE;
 
-  let response;
+  let catalog;
   try {
-    response = await getProducts({ page: 1, limit });
+    catalog = await getAllProducts();
   } catch (e) {
     const message = e instanceof Error ? e.message : undefined;
     return <ProductListingError message={message} />;
   }
 
-  const products = response.data;
-  const totalProducts = response.meta?.pagination?.total ?? 0;
-  const hasNextPage = response.meta?.pagination?.hasNextPage ?? false;
+  const sortedProducts = sortProductsFeaturedFirst(catalog);
+  const totalProducts = sortedProducts.length;
+  const products = sortedProducts.slice(0, limit);
+  const hasNextPage = limit < totalProducts;
 
   return (
     <section

@@ -6,7 +6,7 @@ import {
   Promotions,
   StockStatus,
 } from "@/lib/types";
-import { API_TOKEN, BASE_URL } from "@/lib/constants";
+import { API_TOKEN, BASE_URL, PRODUCT_LIST_PAGE_SIZE } from "@/lib/constants";
 import { cacheLife, cacheTag } from "next/cache";
 import { ApiError, readApiErrorMessage } from "@/lib/apiErrors";
 import { parseJson } from "@/lib/utils";
@@ -77,6 +77,9 @@ export async function getProducts(params?: {
   if (params?.category) {
     cacheTag(`category:${params.category}`);
   }
+  if (params?.featured) {
+    cacheTag("products:featured");
+  }
 
   const searchParams = new URLSearchParams();
   if (params?.page) searchParams.set("page", params.page.toString());
@@ -88,6 +91,27 @@ export async function getProducts(params?: {
   const query = searchParams.toString();
   const endpoint = query ? `/products?${query}` : "/products";
   return fetchAPI(endpoint);
+}
+
+export async function getAllProducts(): Promise<Product[]> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("products");
+
+  const allProducts = [];
+  let page = 1;
+  let hasNextPage = true;
+
+  while (hasNextPage) {
+    const response = await fetchAPI<ApiResponse<Product[], Meta>>(
+      `/products?page=${page}&limit=${PRODUCT_LIST_PAGE_SIZE}`
+    );
+    allProducts.push(...response.data);
+    hasNextPage = response.meta?.pagination?.hasNextPage ?? false;
+    page += 1;
+  }
+
+  return allProducts;
 }
 
 export async function getProduct(id: string): Promise<ApiResponse<Product>> {
