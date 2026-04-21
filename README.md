@@ -1,6 +1,10 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
 ## Getting Started
+
+Install dependencies
+
+```bash
+npm install
+```
 
 First, run the development server:
 
@@ -16,21 +20,15 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+In general, the project has 4 pages:
 
-## Learn More
+- Home page - this page contains the random promotional banner, hero section, featured product section (with the featured products presented first)
+- Search page - this page contains the search bar and a category filter. Initially 6 products are displayed. Searching or filtering updates the url bar, and persists the search.
+- PDP page - this page containes the data specifically for a product, displaying the product name, tags, random in stock status, product quantity, description, and an add to cart cta.
+- Cart page - this page contains who section - order summary, and cart items. Cart items have the following actions -> increase/decrease quantity, remove item. Order summary displays a summary of the order.
 
-To learn more about Next.js, take a look at the following resources:
+## Deployed on Vercel
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Project is deployed on vercel with the following url -> [vercel-swag-store-umber.vercel.app](https://vercel-swag-store-umber.vercel.app/)
